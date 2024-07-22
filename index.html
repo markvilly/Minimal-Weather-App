@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Weather Dashboard</h1>
+      <input type="text" id="cityInput" placeholder="Enter city name" />
+      <button id="fetchWeatherButton">Get Weather</button>
+      <div id="weatherDisplay" class="weather-display"></div>
+    </div>
+    <script type="module">
+      //API end point.
+      //API key.
+
+      //capture button and attach event listener when clicked
+      document
+        .getElementById("fetchWeatherButton")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+          //TODO: Capture the city inputs
+          let cityInput = document.getElementById("cityInput").value;
+
+          fetchCity(cityInput);
+        });
+
+      async function fetchCity(city) {
+        console.log(city);
+        const API_KEY = "1f5bdb6c5adb420c0dfd16861e6b3597";
+        const limit = 1;
+        const GEO_API_ENDPOINT = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=${limit}&appid=${API_KEY}`;
+
+        let response = await fetch(GEO_API_ENDPOINT);
+        let geo_location_data = await response.json();
+        console.log(geo_location_data[0]);
+        console.log(geo_location_data[0].lat, geo_location_data[0].lon);
+
+        //TODO: Convert the city to lat and long.
+        let lat = geo_location_data[0].lat;
+        let lon = geo_location_data[0].lon;
+        let part = "minute";
+        const API_KEY2 = "dc47221d70618dacca82108ee165616d";
+        const WEATHER_API_ENDPOINT = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+        //TODO: Input them into the API call.
+        let response2 = await fetch(WEATHER_API_ENDPOINT);
+        let weather_data = await response2.json();
+        console.log(weather_data);
+
+        const weatherDisp = document.getElementById("weatherDisplay");
+        weatherDisp.innerHTML = `
+        <p>Temp: ${Math.floor(weather_data.list[0].main.temp + -273.15)}</p>
+        <p>Humidiy: ${weather_data.list[0].main.humidity}</p>
+        <p>Sea Level: ${weather_data.list[0].main.sea_level}</p>`;
+
+        //TODO:  Generate the weather data.
+      }
+    </script>
+  </body>
+</html>
